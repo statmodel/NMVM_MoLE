@@ -4,16 +4,16 @@ WD.PATH = paste(getwd(),"/Functions", sep = "")
 
 source(paste(WD.PATH, '/Additional.r', sep = ""))
 source(paste(WD.PATH, '/GHST-mix.r', sep = ""))
-source(paste(WD.PATH, '/NIG-mix-censored.r', sep = ""))
-source(paste(WD.PATH, '/NMVBS-mix-censored.r', sep = ""))
-source(paste(WD.PATH, '/NMVL-mix-censored.r', sep = ""))
-source(paste(WD.PATH, '/SL-mix-censored.r', sep = ""))
-source(paste(WD.PATH, '/VG-mix-censored.r', sep = ""))
-source(paste(WD.PATH, '/normal-mix-censored.r', sep = ""))
+source(paste(WD.PATH, '/NIG-mix.r', sep = ""))
+source(paste(WD.PATH, '/NMVBS-mix.r', sep = ""))
+source(paste(WD.PATH, '/NMVL-mix.r', sep = ""))
+source(paste(WD.PATH, '/SL-mix.r', sep = ""))
+source(paste(WD.PATH, '/VG-mix.r', sep = ""))
+source(paste(WD.PATH, '/normal-mix.r', sep = ""))
 
 #=================Data===============
 
-df=tone_dataset <- read.csv("C:/Users/ASUS/Dropbox/Dr Setudeh/Paper 3/without CR/Naderi/GitHub/Real data/tone_dataset.csv")
+df=tone_dataset <- read.csv("program/tone_dataset.csv")
 head(tone_dataset)
 summary(tone_dataset)
 colnames(tone_dataset)
@@ -28,61 +28,12 @@ r=cbind(rep(1,n),tone_dataset$stretchratio)
 y=tone_dataset$tuned
 
 
-#================QQplot==================
 library(ggplot2)
 library(gridExtra)
 library(grid)
 library(gtable)
 library(dplyr)
 
-dens <- density(y)
-dens_df <- data.frame(
-  x = dens$x,             
-  y = dens$y
-)
-
-p1=ggplot() +
-  geom_histogram(aes(x = y, y = ..density..), 
-                 bins = 10, 
-                 fill = rgb(0, 0.5, 0.5, 0.7), 
-                 color = "black", 
-                 closed = "left") +
-  labs(x = "y", y = "Density", title = "") +
-  theme_minimal()
-p1
-
-p2 <- ggplot(aes(y = y)) +
-  geom_boxplot(fill = 'orange') +
-  coord_flip() +
-  labs(title = "Boxplot", y = "y")
-
-p2
-
-dens <- density(x[,2])
-dens_df <- data.frame(
-  x = dens$x,             
-  y = dens$y
-)
-p2=ggplot() +
-  geom_histogram(aes(x = x[,2], y = ..density..), 
-                 bins = 10, 
-                 fill = rgb(0, 0.5, 0.5, 0.7), 
-                 color = "black", 
-                 closed = "left") +
-  labs(x = "x", y = "Density", title = "") +
-  theme_minimal()
-p2
-Histogram_xy <- arrangeGrob(p1,p2, ncol = 2)
-
-grid.newpage()
-grid.draw(Histogram_xy)
-
-cairo_pdf("Histogram_y.pdf", width =10, height = 5)
-grid.draw(p1)
-dev.off()
-
-
-####################################
 df <- data.frame(y = y)
 
 library(ggplot2)
@@ -157,38 +108,38 @@ p=2
 
 
 g = 2
-Out.NMVBS.ST2 = mix.arch.ST.EM.censor (y, x,d1,d2,typecensor="none",beta=NULL, sigma2 = NULL,
+Out.NMVBS.ST2 = mix.reg.ST.EM (y, x,beta=NULL, sigma2 = NULL,
                                        lambda = NULL, nu = NULL,  r, alpha=NULL,
                                        g = g, Class = NULL, p=p, error = 0.0001,
                                        iter.max = 1000, Stp.rule = "Log.like", 
                                        error.est = F, per = 1, print = F, fix.sigma = F)
-Out.NMVBS.NIG2 = mix.arch.nig.EM.censor (y, x,d1,d2,typecensor="none",beta=NULL, sigma2 = NULL,
+Out.NMVBS.NIG2 = mix.reg.nig.EM (y, x,beta=NULL, sigma2 = NULL,
                                          lambda = NULL, nu = NULL,  r, alpha=NULL,
                                          g = g, Class = NULL, p=p, error = 0.0001,
                                          iter.max = 1000, Stp.rule = "Log.like", 
                                          error.est = F, per = 1, print = F, fix.sigma = F)
-Out.NMVBS.SL2 = mix.arch.SLap.EM.censor (y, x,d1,d2,typecensor="none",beta=NULL, sigma2 = NULL,
+Out.NMVBS.SL2 = mix.reg.SLap.EM (y, x,beta=NULL, sigma2 = NULL,
                                          lambda = NULL,  r, alpha=NULL,
                                          g = g, Class = NULL, p=p, error = 0.0001,
                                          iter.max = 50, Stp.rule = "Log.like", 
                                          error.est = F, per = 1, print = F, fix.sigma = F)
-Out.NMVBS.NMVBS2 = mix.arch.NMVBS.EM.censor (y, x,d1,d2,typecensor="none",beta=NULL, sigma2 = NULL,
+Out.NMVBS.NMVBS2 = mix.reg.NMVBS.EM (y, x,beta=NULL, sigma2 = NULL,
                                              lambda = NULL,  r, alpha=NULL,alpha2=NULL,
                                              g = g, Class = NULL, p=p, error = 0.0001,
                                              iter.max = 1000, Stp.rule = "Log.like", 
                                              error.est = F, per = 1, print = F, fix.sigma = F)
-Out.NMVBS.NMVL2 = mix.arch.NMVL.EM.censor(y, x,d1,d2,typecensor="none",beta=NULL, sigma2 = NULL,
+Out.NMVBS.NMVL2 = mix.reg.NMVL.EM(y, x,beta=NULL, sigma2 = NULL,
                                           lambda = NULL,  r, alpha=NULL, alpha2=NULL,
                                           g = g, Class = NULL, p=p, error = 0.0001,
                                           iter.max = 1000, Stp.rule = "Log.like", 
                                           error.est = F, per = 1, print = F, fix.sigma = F)
-Out.NMVBS.VG2 = mix.arch.VG.EM.censor(y, x,d1,d2,typecensor="none",beta=NULL, sigma2 = NULL,
+Out.NMVBS.VG2 = mix.reg.VG.EM(y, x, beta=NULL, sigma2 = NULL,
                                       lambda = NULL, nu=NULL, r, alpha=NULL, 
                                       g = g, Class = NULL, p=p, error = 0.0001,
                                       iter.max = 1000, Stp.rule = "Log.like", 
                                       error.est = F, per = 1, print = F, fix.sigma = F)
 
-Out.NMVBS.N2 = mix.arch.norm.EM.censor(y, x, d1,d2,typecensor="none", beta=NULL, sigma2 = NULL, 
+Out.NMVBS.N2 = mix.reg.norm.EM(y, x, beta=NULL, sigma2 = NULL, 
                                                    g = g, r, alpha=NULL, Class = NULL,
                                                    error = 0.0001,p=p, iter.max = 100, 
                                                    Stp.rule = "Log.like", 
@@ -256,23 +207,6 @@ rbind(c((mean(abs(pred_GHST2test$y-ytest)/ytest)),(mean(abs(pred_NIG2test$y-ytes
         (mean(abs(pred_N2test$y-ytest)/ytest))))
 
 
-
-set.seed(1368)
-pred_GHST2test=predict.mix.reg.NMV(ntest,xtest,matrix(par$GHST[1:10],ncol=2), par$GHST[11:12], par$GHST[13:14], rbind(par$GHST[15:16]), par$GHST[19:22],rtest,family = "GHST",SN = FALSE)
-pred_NIG2test=predict.mix.reg.NMV(ntest,xtest,matrix(par$NIG[1:10],ncol=2), par$NIG[11:12], par$NIG[13:14], rbind(par$NIG[15:16]), par$NIG[19:22],rtest,family ="NIG",SN = FALSE)
-pred_SL2test=predict.mix.reg.NMV(ntest,xtest,matrix(par$SL[1:10],ncol=2), par$SL[11:12], par$SL[13:14], rbind(par$SL[15:16]), par$SL[19:22],rtest,family ="SL",SN = FALSE)
-pred_NMVBS2test=predict.mix.reg.NMV(ntest,xtest,matrix(par$NMVBS[1:10],ncol=2), par$NMVBS[11:12], par$NMVBS[13:14], rbind(par$NMVBS[15:16]), par$NMVBS[19:22],rtest,family ="NMVBS",SN = FALSE)
-pred_NMVL2test=predict.mix.reg.NMV(ntest,xtest,matrix(par$NMVL[1:10],ncol=2), par$NMVL[11:12], par$NMVL[13:14], rbind(par$NMVL[15:16]), par$NMVL[19:22],rtest,family ="NMVL",SN = FALSE)
-pred_VG2test=predict.mix.reg.NMV(ntest,xtest,matrix(par$VG[1:10],ncol=2), par$VG[11:12], par$VG[13:14],cbind(par$VG[15:16],par$VG[17:18]), par$VG[19:22],rtest,family ="VG",SN = FALSE)
-
-
-c(sqrt(mean((pred_GHST2test$y-ytest)^2)),sqrt(mean((pred_NIG2test$y-ytest)^2)),
-  sqrt(mean((pred_SL2test$y-ytest)^2)),sqrt(mean((pred_NMVBS2test$y-ytest)^2)),
-  sqrt(mean((pred_NMVL2test$y-ytest)^2)),sqrt(mean((pred_VG2test$y-ytest)^2)))
-
-
-
-
 #####################################
 train_data$classSL=as.factor(Out.NMVBS.SL2$group)
 colnames(train_data)=c("x","y", "Class")
@@ -324,7 +258,6 @@ colnames(df_new) = c("x","y")
 df_new$class = c(rep(1,105), rep(2,45))
 df_new$class = factor(df_new$class, labels=c("Train","Test"))
 
-# نمودار اول با رنگ + شکل متفاوت و گروه بزرگ با نقطه بزرگتر
 p1 = ggplot(df_new, aes(x = x, y = y, 
                         color = class, 
                         shape = class)) +
@@ -341,7 +274,6 @@ p1 = ggplot(df_new, aes(x = x, y = y,
   theme(legend.position = "top") +
   labs(color = NULL, shape = NULL, size = NULL)  # حذف نام ستون‌ها از legend
 
-# باقیمانده‌ها
 res = df_new$y - c(pred_SL2$yhat, pred_SL2test$yhat)
 df_new$res = res
 
@@ -364,41 +296,3 @@ grid.draw(grid2)
 dev.off()
 ggsave("train_test-res.png", plot = grid2, width =10, height = 5, dpi = 300)
 
-
-
-# اضافه کردن چند نقطه خاص برای برچسب‌گذاری
-data$label <- NA
-data$label[c(56, 60, 85, 147)] <- c("56", "60", "85", "147")
-# (نکته: داده واقعی شما ممکن است نیاز به برچسب‌گذاری سطرهای خاص داشته باشد)
-
-# نمودار
-ggplot(data, aes(x = actual_tone, y = perceived_tone)) +
-  geom_point(alpha = 0.6, color = "darkgreen") +
-  
-  # خطوط رگرسیون برای هر گروه
-  geom_smooth(data = subset(data, group == "N-MRM"),
-              method = "lm", se = FALSE,
-              linetype = "dotted", color = "blue", size = 1.2) +
-  geom_smooth(data = subset(data, group == "NMVBS-MRM"),
-              method = "lm", se = FALSE,
-              linetype = "dashed", color = "red", size = 1.2) +
-  
-  # برچسب‌ها برای نقاط خاص (با شکل‌های مختلف)
-  geom_point(data = data[c(56, 60, 85, 147), ], aes(shape = label, color = label), size = 4) +
-  geom_text(data = data[c(56, 60, 85, 147), ],
-            aes(label = label), hjust = -0.3, vjust = -0.5, size = 3.5) +
-  
-  scale_shape_manual(values = c("56" = 15, "60" = 17, "85" = 15, "147" = 15)) +
-  scale_color_manual(values = c("56" = "orange", "60" = "red", "85" = "gold", "147" = "gold")) +
-  
-  # تنظیمات نمودار
-  labs(title = "",
-       x = "Actual tone",
-       y = "Perceived tone") +
-  theme_minimal() +
-  theme(legend.position = "top") +
-  
-  # راهنمای دستی برای خطوط
-  guides(color = guide_legend(override.aes = list(shape = NA))) +
-  annotate("text", x = 2.7, y = 3.3, label = "NMVBS–MRM", color = "red", hjust = 0, size = 4) +
-  annotate("text", x = 2.7, y = 2.9, label = "N–MRM", color = "blue", hjust = 0, size = 4)
